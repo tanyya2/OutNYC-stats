@@ -10,8 +10,12 @@ export const getViewer = cache(async () => {
   // run on a real visit, never ahead of time.
   await connection();
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { status: "signed-out" as const };
+  // getClaims checks the login's signature right here (no trip to Supabase Auth),
+  // which is faster than getUser. The database checks the same login again anyway.
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+  if (!claims) return { status: "signed-out" as const };
+  const user = { id: claims.sub, email: claims.email };
 
   const { data: isAdmin } = await supabase.rpc("is_superadmin");
   if (isAdmin !== true) return { status: "not-admin" as const, user };
