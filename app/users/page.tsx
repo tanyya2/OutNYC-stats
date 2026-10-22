@@ -1,5 +1,6 @@
-import Image from "next/image";
+import Link from "next/link";
 import { requireAdmin } from "@/utils/auth";
+import { Avatar } from "../avatar";
 
 type Profile = {
   id: string;
@@ -69,22 +70,10 @@ export default async function UsersPage() {
                 return (
                   <tr key={user.id} className="border-b border-line last:border-0">
                     <td className="px-5 py-3">
-                      <div className="flex items-center gap-3">
-                        {user.avatar_url ? (
-                          <Image
-                            src={user.avatar_url}
-                            alt=""
-                            width={36}
-                            height={36}
-                            className="size-9 rounded-full object-cover"
-                          />
-                        ) : (
-                          <span className="flex size-9 items-center justify-center rounded-full bg-paper font-serif text-ink-soft">
-                            {name[0].toUpperCase()}
-                          </span>
-                        )}
-                        <span className="text-ink">{name}</span>
-                      </div>
+                      <Link href={`/users/${user.id}`} className="group flex items-center gap-3">
+                        <Avatar url={user.avatar_url} name={name} size={36} />
+                        <span className="text-ink group-hover:underline">{name}</span>
+                      </Link>
                     </td>
                     <td className="px-5 py-3 text-ink-soft">{formatDate(user.created_at)}</td>
                     <td className="px-5 py-3 text-right tabular-nums text-ink">{plansBy.get(user.id) ?? 0}</td>
