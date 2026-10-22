@@ -1,0 +1,26 @@
+import Link from "next/link";
+import { getViewer } from "@/utils/auth";
+import { signOut } from "./login/actions";
+import { NavLinks } from "./nav-links";
+
+// Top menu, only for admins. Pages still check requireAdmin() themselves.
+export async function Nav() {
+  const viewer = await getViewer();
+  if (viewer.status !== "admin") return null;
+
+  return (
+    <header className="border-b border-line bg-card">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-8 gap-y-3 px-4 py-4">
+        <Link href="/" className="font-serif text-xl text-ink">
+          OutNYC <span className="text-muted">Admin</span>
+        </Link>
+        <NavLinks />
+        <form action={signOut} className="ml-auto">
+          <button className="rounded-full border border-line-strong px-4 py-1.5 text-sm text-ink hover:bg-paper">
+            Sign out
+          </button>
+        </form>
+      </div>
+    </header>
+  );
+}

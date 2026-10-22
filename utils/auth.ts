@@ -1,10 +1,14 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
 // Who is visiting? Signed out, signed in but not admin, or admin.
 // cache() = asked once per page load, however many places call it.
 export const getViewer = cache(async () => {
+  // Login checks read the clock (is the session expired?), so they must
+  // run on a real visit, never ahead of time.
+  await connection();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { status: "signed-out" as const };
