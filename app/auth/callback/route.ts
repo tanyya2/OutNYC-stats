@@ -12,5 +12,5 @@ export async function GET(request: Request) {
     if (!error) return NextResponse.redirect(`${origin}/`);
   }
 
-  return NextResponse.redirect(`${origin}/?error=login`);
+  return NextResponse.redirect(`${origin}/login?error=login`);
 }
