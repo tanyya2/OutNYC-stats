@@ -13,6 +13,8 @@
   --color-line: #d9d1c1;
   --color-line-strong: #cfc6b4;
   --color-accent: #1e5a43;
+  /* 👎 and errors: warm rust, tells apart from the green even with color blindness */
+  --color-down: #b8613a;
   --font-sans: var(--font-inter);
   --font-serif: var(--font-newsreader);
 }
