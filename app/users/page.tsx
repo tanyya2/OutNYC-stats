@@ -44,7 +44,7 @@ export default async function UsersPage() {
   const votesBy = countByUser(votes.data);
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-10">
+    <main className="mx-auto w-full max-w-screen-2xl px-6 py-6">
       <p className="text-xs uppercase tracking-widest text-muted">Users</p>
       <h1 className="mt-2 font-serif text-4xl text-ink">
         {users.length} {users.length === 1 ? "user" : "users"}

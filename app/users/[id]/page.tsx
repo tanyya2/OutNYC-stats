@@ -64,7 +64,7 @@ export default async function UserPage({ params }: PageProps<"/users/[id]">) {
   ];
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-10">
+    <main className="mx-auto w-full max-w-3xl px-6 py-6">
       <Link href="/users" className="text-sm text-muted hover:text-ink">
         ← All users
       </Link>

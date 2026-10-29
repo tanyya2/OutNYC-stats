@@ -49,7 +49,7 @@ export default async function VotesPage({ searchParams }: PageProps<"/votes">) {
     "rounded-full border border-line-strong bg-card px-4 py-2.5 text-sm text-ink focus:border-accent focus:outline-none";
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-10">
+    <main className="mx-auto w-full max-w-screen-2xl px-6 py-6">
       <p className="text-xs uppercase tracking-widest text-muted">Votes</p>
       <h1 className="mt-2 font-serif text-4xl text-ink">
         {filtered ? `${shown.length} of ${votes.length} votes` : `${votes.length} votes`}

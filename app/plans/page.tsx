@@ -41,7 +41,7 @@ export default async function PlansPage({ searchParams }: PageProps<"/plans">) {
   const shown = plans.filter((plan) => words.every((word) => plan.haystack.includes(word)));
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-10">
+    <main className="mx-auto w-full max-w-screen-2xl px-6 py-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-widest text-muted">Plans</p>

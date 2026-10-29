@@ -46,7 +46,7 @@ export default async function PlanPage({ params, searchParams }: PageProps<"/pla
   ];
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-10">
+    <main className="mx-auto w-full max-w-3xl px-6 py-6">
       <Link href="/plans" className="text-sm text-muted hover:text-ink">
         ← All plans
       </Link>

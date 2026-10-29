@@ -10,7 +10,7 @@ export async function Nav() {
 
   return (
     <header className="border-b border-line bg-card">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-8 gap-y-3 px-4 py-4">
+      <div className="mx-auto flex max-w-screen-2xl flex-wrap items-center gap-x-8 gap-y-2 px-6 py-2.5">
         <Link href="/" className="font-serif text-xl text-ink">
           OutNYC <span className="text-muted">Admin</span>
         </Link>

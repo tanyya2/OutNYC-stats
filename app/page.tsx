@@ -202,7 +202,7 @@ export default async function Dashboard({ searchParams }: PageProps<"/">) {
     .slice(0, 5);
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-10">
+    <main className="mx-auto w-full max-w-screen-2xl px-6 py-6">
       <RangeFilter range={range} today={today} />
       {loadError && <p className="mt-3 text-sm text-down">Some data didn&apos;t load: {loadError.message}</p>}
       {!allTime && !votesHaveDates && (
