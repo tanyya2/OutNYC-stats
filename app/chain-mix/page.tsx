@@ -23,7 +23,7 @@ export default async function ChainMixPage({ searchParams }: PageProps<"/chain-m
       <p className="mt-4 text-xs uppercase tracking-widest text-muted">Prompt chain mix</p>
       <h1 className="mt-2 font-serif text-4xl text-ink">Which chain makes new plans</h1>
       <p className="mt-2 mb-8 max-w-2xl text-sm text-ink-soft">
-        How often each chain will be picked for a new plan. A weight of 0 turns a chain off. Not implemented yet.
+        How often each chain will be picked for a new plan. A weight of 0 turns a chain off.
       </p>
 
       {saved && <p className="mb-6 text-sm text-ink-soft">Mix saved.</p>}

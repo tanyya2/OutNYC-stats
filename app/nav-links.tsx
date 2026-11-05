@@ -11,6 +11,7 @@ const links: NavLink[] = [
   { href: "/users", label: "Users" },
   { href: "/plans", label: "Plans" },
   { href: "/votes", label: "Votes" },
+  { href: "/costs", label: "Costs" },
 ];
 
 // Too many pages for one row, so the rest sit in dropdowns

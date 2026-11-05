@@ -46,7 +46,7 @@ export default async function GenerationRequestsPage({ searchParams }: PageProps
         {rows.length} {filter ?? ""} {rows.length === 1 ? "request" : "requests"}
       </h1>
       <p className="mt-2 max-w-2xl text-sm text-ink-soft">
-        Each time someone asks OutNYC for a plan, including the ones that fail. Newest first, up to 500. Not implemented yet.
+        Each time someone asks OutNYC for a plan, including the ones that fail. Newest first, up to 500.
         {!filter && rows.length > 0 && ` ${failed} failed.`}
       </p>
 
@@ -102,7 +102,8 @@ export default async function GenerationRequestsPage({ searchParams }: PageProps
                           <span className="text-accent">Success</span>
                         )
                       ) : (
-                        <span className="text-down">Failed{row.error && `: ${row.error}`}</span>
+                        // OutNYC logs the message the user saw, then "Reason: …" on its own line
+                        <span className="whitespace-pre-line text-down">Failed{row.error && `: ${row.error}`}</span>
                       )}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap tabular-nums text-ink-soft">

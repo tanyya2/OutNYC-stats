@@ -1,3 +1,4 @@
+import Form from "next/form";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/utils/auth";
@@ -48,8 +49,8 @@ export default async function ResourceListPage({ params, searchParams }: PagePro
       {saved && <p className="mt-4 text-sm text-ink-soft">Saved.</p>}
       {deleted && <p className="mt-4 text-sm text-ink-soft">Deleted.</p>}
 
-      {/* A plain GET form: the search lives in the URL */}
-      <form autoComplete="off" data-form-type="other" className="mt-6 flex gap-2">
+      {/* A GET form (client-side navigation, no full reload): the search lives in the URL */}
+      <Form action={`/${key}`} autoComplete="off" data-form-type="other" className="mt-6 flex gap-2">
         <input
           name="q"
           defaultValue={query}
@@ -62,7 +63,7 @@ export default async function ResourceListPage({ params, searchParams }: PagePro
             Clear
           </Link>
         )}
-      </form>
+      </Form>
 
       {error && <p className="mt-6 text-sm text-down">Couldn&apos;t load {resource.title.toLowerCase()}: {error.message}</p>}
       {!error && shown.length === 0 && (

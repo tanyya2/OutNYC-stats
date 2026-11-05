@@ -13,6 +13,9 @@ type Chain = {
 
 const weightOf = (mix: Chain["prompt_chain_mix"]) => (Array.isArray(mix) ? (mix[0]?.weight ?? 0) : (mix?.weight ?? 0));
 
+// Steps that can send something to an AI model
+const usesAI = (kind: string) => kind === "llm_call" || kind === "check";
+
 // Read only: the steps OutNYC goes through to turn a request into a plan
 export default async function PromptChainsPage() {
   const { supabase } = await requireAdmin();
@@ -32,7 +35,7 @@ export default async function PromptChainsPage() {
             {chains.length} {chains.length === 1 ? "chain" : "chains"}
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-ink-soft">
-            Each chain is a list of steps for turning someone&apos;s request into a plan. Not implemented yet.
+            Each chain is a list of steps for turning someone&apos;s request into a plan.
           </p>
         </div>
         <Link href="/chain-mix" className="rounded-full border border-line-strong px-5 py-2.5 text-sm text-ink hover:bg-card">
@@ -68,21 +71,24 @@ export default async function PromptChainsPage() {
                   <table className="w-full text-left text-sm">
                     <thead className="border-b border-line text-xs uppercase tracking-widest text-muted">
                       <tr>
-                        <th className="py-2 pr-4 font-normal">ID</th>
                         <th className="py-2 pr-4 font-normal">Step</th>
                         <th className="py-2 pr-4 font-normal">Name</th>
                         <th className="py-2 pr-4 font-normal">Kind</th>
+                        <th className="py-2 pr-4 font-normal">Uses AI</th>
                         <th className="py-2 font-normal">What it does</th>
                       </tr>
                     </thead>
                     <tbody>
                       {steps.map((step) => (
                         <tr key={step.id} className="border-b border-line align-top last:border-0">
-                          <td className="py-3 pr-4 tabular-nums text-muted">{step.id}</td>
                           <td className="py-3 pr-4 tabular-nums text-ink">{step.step_order}</td>
                           <td className="py-3 pr-4 text-ink">{step.name}</td>
                           <td className="py-3 pr-4">
                             <code className="rounded bg-paper px-1.5 py-0.5 text-xs text-ink-soft">{step.kind}</code>
+                          </td>
+                          {/* llm_call asks Gemini; check asks it once more when the plan breaks the rules */}
+                          <td className={`py-3 pr-4 ${usesAI(step.kind) ? "text-accent" : "text-muted"}`}>
+                            {usesAI(step.kind) ? "Yes" : "No"}
                           </td>
                           <td className="py-3 text-ink-soft">{step.instructions ?? "—"}</td>
                         </tr>

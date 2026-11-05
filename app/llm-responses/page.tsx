@@ -1,3 +1,4 @@
+import Form from "next/form";
 import Link from "next/link";
 import { requireAdmin } from "@/utils/auth";
 
@@ -49,12 +50,12 @@ export default async function LlmResponsesPage({ searchParams }: PageProps<"/llm
         {requestId && <span className="text-muted"> for request #{requestId}</span>}
       </h1>
       <p className="mt-2 max-w-2xl text-sm text-ink-soft">
-        Each reply OutNYC gets from an AI model. Newest first, up to 500. Not implemented yet.
+        Each reply OutNYC gets from an AI model. Newest first, up to 500.
         {avg !== null && ` Average time: ${avg.toFixed(1)}s.`}
       </p>
 
-      {/* A plain GET form: the filters live in the URL */}
-      <form autoComplete="off" data-form-type="other" className="mt-6 flex flex-wrap items-center gap-2 text-sm">
+      {/* A GET form (client-side navigation, no full reload): the filters live in the URL */}
+      <Form action="/llm-responses" autoComplete="off" data-form-type="other" className="mt-6 flex flex-wrap items-center gap-2 text-sm">
         {requestId && <input type="hidden" name="request" value={requestId} />}
         <select name="model" defaultValue={modelName ?? ""} className="rounded-full border border-line-strong bg-card px-4 py-2 text-ink">
           <option value="">All models</option>
@@ -75,7 +76,7 @@ export default async function LlmResponsesPage({ searchParams }: PageProps<"/llm
             Clear
           </Link>
         )}
-      </form>
+      </Form>
 
       {error && <p className="mt-6 text-sm text-down">Couldn&apos;t load responses: {error.message}</p>}
       {!error && rows.length === 0 && <p className="mt-8 text-sm text-ink-soft">No responses{filtered ? " match" : " yet"}.</p>}

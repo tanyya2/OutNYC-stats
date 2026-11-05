@@ -15,7 +15,7 @@ type Row = {
   model: string | null;
   content: string | null;
   profiles: { first_name: string | null; last_name: string | null } | null;
-  votes: { value: number }[];
+  votes: { value: number; user_id: string }[];
 };
 
 export default async function PlanPage({ params, searchParams }: PageProps<"/plans/[id]">) {
@@ -26,7 +26,7 @@ export default async function PlanPage({ params, searchParams }: PageProps<"/pla
 
   const { data } = await supabase
     .from("plans")
-    .select("id, created_at, neighborhood, inputs, prompt, model, content, profiles(first_name, last_name), votes(value)")
+    .select("id, created_at, neighborhood, inputs, prompt, model, content, profiles(first_name, last_name), votes(value, user_id)")
     .eq("id", Number(id))
     .maybeSingle();
   if (!data) notFound();
@@ -35,6 +35,16 @@ export default async function PlanPage({ params, searchParams }: PageProps<"/pla
   const plan = parseContent(row.content);
   const up = row.votes.filter((vote) => vote.value === 1).length;
   const down = row.votes.filter((vote) => vote.value === -1).length;
+
+  // Who voted: names of the people behind the votes
+  const voterIds = row.votes.map((vote) => vote.user_id);
+  const { data: voters } = voterIds.length
+    ? await supabase.from("profiles").select("id, first_name, last_name").in("id", voterIds)
+    : { data: [] };
+  const nameOf = new Map(
+    ((voters ?? []) as { id: string; first_name: string | null; last_name: string | null }[]).map((p) => [p.id, fullName(p)]),
+  );
+  const votesShown = [...row.votes].sort((a, b) => b.value - a.value);
   const minutes = plan?.stops.reduce((total, stop) => total + (Number(stop.minutes) || 0), 0) ?? 0;
   const inputs = row.inputs ?? {};
 
@@ -68,6 +78,24 @@ export default async function PlanPage({ params, searchParams }: PageProps<"/pla
           </div>
         ))}
       </dl>
+
+      <section className="mt-6 rounded-2xl border border-line bg-card p-5 text-sm">
+        <h2 className="text-xs uppercase tracking-widest text-muted">Who voted</h2>
+        {votesShown.length ? (
+          <ul className="mt-2 divide-y divide-line">
+            {votesShown.map((vote) => (
+              <li key={vote.user_id} className="flex items-baseline justify-between gap-4 py-2">
+                <Link href={`/users/${vote.user_id}`} className="min-w-0 truncate text-ink hover:underline">
+                  {nameOf.get(vote.user_id) ?? "Unknown user"}
+                </Link>
+                <span className={vote.value === 1 ? "text-accent" : "text-down"}>{vote.value === 1 ? "👍 Up" : "👎 Down"}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="mt-2 text-muted">No votes yet.</p>
+        )}
+      </section>
 
       {/* What the user asked OutNYC for (read only) */}
       <section className="mt-6 rounded-2xl border border-line bg-card p-5 text-sm text-ink-soft">

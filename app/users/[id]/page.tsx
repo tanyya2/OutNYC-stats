@@ -13,6 +13,8 @@ type Profile = {
   avatar_url: string | null;
   bio: string | null;
   is_superadmin: boolean;
+  // Added by sql/test-data.sql: accounts that aren't real people
+  is_test?: boolean;
 };
 type Plan = { id: number; created_at: string; neighborhood: string | null; content: string | null; votes: { value: number }[] };
 // select("*"): created_at is shown only if the votes table has it
@@ -24,10 +26,10 @@ export default async function UserPage({ params }: PageProps<"/users/[id]">) {
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
-  const [profileRes, plansRes, votesRes] = await Promise.all([
+  const [profileRes, plansRes, votesRes, emailsRes] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, created_at, updated_at, first_name, last_name, avatar_url, bio, is_superadmin")
+      .select("*")
       .eq("id", id)
       .maybeSingle(),
     supabase
@@ -36,6 +38,8 @@ export default async function UserPage({ params }: PageProps<"/users/[id]">) {
       .eq("user_id", id)
       .order("created_at", { ascending: false }),
     supabase.from("votes").select("*").eq("user_id", id),
+    // Emails live in Supabase's login table; this admin-only function reads them
+    supabase.rpc("admin_user_emails"),
   ]);
   if (!profileRes.data) notFound();
 
@@ -56,7 +60,11 @@ export default async function UserPage({ params }: PageProps<"/users/[id]">) {
   );
   const ups = votes.filter((vote) => vote.value === 1).length;
 
+  const email = ((emailsRes.data ?? []) as { id: string; email: string | null }[]).find((row) => row.id === id)?.email;
+
   const facts = [
+    { label: "Email", value: email ?? "—" },
+    { label: "User ID", value: profile.id },
     { label: "Joined", value: formatDate(profile.created_at) },
     { label: "Profile updated", value: profile.updated_at ? formatDate(profile.updated_at) : "—" },
     { label: "Plans made", value: String(plans.length) },
@@ -76,6 +84,11 @@ export default async function UserPage({ params }: PageProps<"/users/[id]">) {
           {profile.is_superadmin && (
             <span className="mt-1 inline-block rounded-full bg-accent px-2.5 py-0.5 text-xs text-white">Admin</span>
           )}
+          {profile.is_test && (
+            <span className="mt-1 inline-block rounded-full border border-line-strong px-2.5 py-0.5 text-xs text-ink-soft">
+              Test user: not a real person
+            </span>
+          )}
         </div>
       </div>
 
@@ -88,7 +101,10 @@ export default async function UserPage({ params }: PageProps<"/users/[id]">) {
         {facts.map((fact) => (
           <div key={fact.label} className="bg-card p-4">
             <dt className="text-xs uppercase tracking-widest text-muted">{fact.label}</dt>
-            <dd className="mt-1 font-serif text-xl text-ink">{fact.value}</dd>
+            {/* The id is long: smaller and allowed to wrap */}
+            <dd className={fact.label === "User ID" ? "mt-1 font-mono text-xs break-all text-ink" : "mt-1 font-serif text-xl break-words text-ink"}>
+              {fact.value}
+            </dd>
           </div>
         ))}
       </dl>

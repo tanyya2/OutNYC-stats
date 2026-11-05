@@ -42,7 +42,7 @@ export const RESOURCES = {
     table: "llm_models",
     title: "LLM models",
     noun: "model",
-    description: "AI models for writing plans. Not implemented yet.",
+    description: "AI models for writing plans.",
     fields: [
       { name: "provider_id", label: "Provider", type: "select", required: true, options: { table: "llm_providers", label: "name" } },
       { name: "name", label: "API name", type: "text", required: true, max: 120, help: "Exactly as the provider's API expects it, e.g. gemini-2.5-flash." },
@@ -58,7 +58,7 @@ export const RESOURCES = {
     table: "terms",
     title: "Terms",
     noun: "term",
-    description: "NYC words and places for the AI to understand and use in plans. Not implemented yet.",
+    description: "NYC words and places for the AI to understand and use in plans.",
     fields: [
       { name: "term", label: "Term", type: "text", required: true, max: 80 },
       { name: "definition", label: "Definition", type: "textarea", required: true, max: 500 },
@@ -71,7 +71,7 @@ export const RESOURCES = {
     table: "generation_examples",
     title: "AI generation examples",
     noun: "example",
-    description: "Sample requests with the plan we'd want back, to show the AI what a good plan looks like. Not implemented yet.",
+    description: "Sample requests with the plan we'd want back, to show the AI what a good plan looks like.",
     fields: [
       { name: "title", label: "Title", type: "text", required: true, max: 120 },
       { name: "request", label: "Request", type: "textarea", required: true, max: 500, help: "What the user asked for: place, time, budget, what for." },
@@ -85,7 +85,7 @@ export const RESOURCES = {
     table: "allowed_signup_domains",
     title: "Allowed sign-up domains",
     noun: "domain",
-    description: "Email domains that will be allowed to sign up. Not implemented yet.",
+    description: "Email domains that will be allowed to sign up.",
     fields: [{ name: "domain", label: "Domain", type: "text", required: true, max: 120, help: "Without the @, e.g. columbia.edu." }],
     columns: ["domain", "created_at"],
     orderBy: { column: "domain", ascending: true },
@@ -94,7 +94,7 @@ export const RESOURCES = {
     table: "whitelist_email_addresses",
     title: "Whitelisted emails",
     noun: "email",
-    description: "Email addresses that will be allowed to sign up even if their domain isn't on the list. Not implemented yet.",
+    description: "Email addresses that will be allowed to sign up even if their domain isn't on the list.",
     fields: [
       { name: "email", label: "Email", type: "text", required: true, max: 200 },
       { name: "note", label: "Note", type: "text", max: 200, help: "Who this is, for your own reference." },

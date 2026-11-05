@@ -1,6 +1,8 @@
+import Form from "next/form";
 import Link from "next/link";
 import { requireAdmin } from "@/utils/auth";
 import { formatDate, fullName, one, parseContent } from "@/utils/plans";
+import { AreaSelect } from "./area-select";
 
 type Row = {
   id: number;
@@ -13,8 +15,9 @@ type Row = {
 
 export default async function PlansPage({ searchParams }: PageProps<"/plans">) {
   const { supabase } = await requireAdmin();
-  const { q, deleted } = await searchParams;
+  const { q, area, deleted } = await searchParams;
   const query = (typeof q === "string" ? q : "").trim();
+  const areaPick = (typeof area === "string" ? area : "").trim();
 
   const { data, error } = await supabase
     .from("plans")
@@ -37,8 +40,19 @@ export default async function PlansPage({ searchParams }: PageProps<"/plans">) {
     };
   });
 
+  // Every area that has plans, A–Z, with how many
+  const areaCounts = new Map<string, number>();
+  for (const row of plans) {
+    const name = row.neighborhood?.trim();
+    if (name) areaCounts.set(name, (areaCounts.get(name) ?? 0) + 1);
+  }
+  const areas = [...areaCounts].sort((a, b) => a[0].localeCompare(b[0]));
+
   const words = query.toLowerCase().split(/\s+/).filter(Boolean);
-  const shown = plans.filter((plan) => words.every((word) => plan.haystack.includes(word)));
+  const shown = plans.filter(
+    (plan) => (!areaPick || plan.neighborhood?.trim() === areaPick) && words.every((word) => plan.haystack.includes(word)),
+  );
+  const filtered = query || areaPick;
 
   return (
     <main className="mx-auto w-full max-w-screen-2xl px-6 py-6">
@@ -46,7 +60,8 @@ export default async function PlansPage({ searchParams }: PageProps<"/plans">) {
         <div>
           <p className="text-xs uppercase tracking-widest text-muted">Plans</p>
           <h1 className="mt-2 font-serif text-4xl text-ink">
-            {query ? `${shown.length} of ${plans.length} plans` : `${plans.length} plans`}
+            {filtered ? `${shown.length} of ${plans.length} plans` : `${plans.length} plans`}
+            {areaPick && <span className="text-muted"> in {areaPick}</span>}
           </h1>
         </div>
         <Link
@@ -59,8 +74,9 @@ export default async function PlansPage({ searchParams }: PageProps<"/plans">) {
 
       {deleted && <p className="mt-4 text-sm text-ink-soft">Plan deleted.</p>}
 
-      {/* A plain GET form: the search lives in the URL (/plans?q=soho) */}
-      <form autoComplete="off" data-form-type="other" className="mt-6 flex gap-2">
+      {/* A GET form (client-side navigation, no full reload): the search and area live in the URL (/plans?area=Hell%27s+Kitchen) */}
+      <Form action="/plans" autoComplete="off" data-form-type="other" className="mt-6 flex flex-wrap gap-2">
+        <AreaSelect areas={areas} value={areaPick} />
         <input
           name="q"
           defaultValue={query}
@@ -70,12 +86,12 @@ export default async function PlansPage({ searchParams }: PageProps<"/plans">) {
         <button className="rounded-full border border-line-strong px-5 py-2.5 text-sm text-ink hover:bg-card">
           Search
         </button>
-        {query && (
+        {filtered && (
           <Link href="/plans" className="self-center px-2 text-sm text-muted hover:text-ink">
             Clear
           </Link>
         )}
-      </form>
+      </Form>
 
       {error && <p className="mt-6 text-sm text-ink-soft">Couldn&apos;t load plans: {error.message}</p>}
       {!error && shown.length === 0 && <p className="mt-8 text-sm text-ink-soft">No plans match.</p>}
