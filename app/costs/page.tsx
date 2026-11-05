@@ -114,15 +114,6 @@ export default async function CostsPage() {
                 <td className="py-3 pr-4 text-right text-ink tabular-nums">{aiPlansThisMonth} plans</td>
                 <td className="py-3 text-right text-ink tabular-nums">{money(0)}</td>
               </tr>
-              <tr className="border-b border-line">
-                <td className="py-3 pr-4">
-                  <p className="text-ink">OpenStreetMap</p>
-                  <p className="text-xs text-muted">Finds addresses people type</p>
-                </td>
-                <td className="py-3 pr-4 text-ink-soft">Always free</td>
-                <td className="py-3 pr-4 text-right text-muted">—</td>
-                <td className="py-3 text-right text-ink tabular-nums">{money(0)}</td>
-              </tr>
               <tr>
                 <td colSpan={3} className="pt-3 pr-4 font-medium text-ink">
                   Total
